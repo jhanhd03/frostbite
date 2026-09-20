@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "nombre": "Hielo Gourmet Premium 1 Kg",
+    "categoria": "Minimarket y Botillerías",
+    "tipo": "Gourmet",
+    "precio": 600,
+    "formato": "Bolsa individual 1 Kg",
+    "descripcion": "Cubo gourmet macizo, compacto y de alta transparencia. Ideal para botillerías de paso y minimarkets.",
+    "imagen": "https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=600&q=80",
+    "stock": 60,
+    "temperatura": "-18°C",
+    "deshielo": "Lento"
+  },
+
+]
