@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import ProductCard from "./components/ProductCard";
 import CategoryFilter from "./components/CategoryFilter";
+import ProductDetailModal from "./components/ProductDetailModal";
+import Cart from "./components/Cart";
 import { obtenerProductos } from "./data/productos";
 
 function App() {
@@ -9,8 +11,9 @@ function App() {
   const [carrito, setCarrito] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [mostrarCarrito, setMostrarCarrito] = useState(false);
 
-  // Petición simulada al cargar la página
   useEffect(() => {
     obtenerProductos().then((datos) => {
       setProductos(datos);
@@ -22,11 +25,10 @@ function App() {
     setCarrito([...carrito, producto]);
   };
 
-  const verDetalle = (producto) => {
-    alert(`Detalle: ${producto.nombre}\n\n${producto.descripcion}\nFormato: ${producto.formato}`);
+  const vaciarCarrito = () => {
+    setCarrito([]);
   };
 
-  // Filtro de productos
   const productosFiltrados = categoriaSeleccionada === "Todos"
     ? productos
     : productos.filter((prod) => prod.categoria === categoriaSeleccionada);
@@ -36,16 +38,15 @@ function App() {
       {/* 1. Navbar */}
       <Navbar 
         cartCount={carrito.length} 
-        onOpenCart={() => alert(`Total de pedidos acumulados: ${carrito.length}`)} 
+        onOpenCart={() => setMostrarCarrito(true)} 
       />
 
-      {/* 2. Contenedor principal */}
+      {/* 2. Contenido Principal */}
       <main className="max-w-5xl mx-auto p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">
           Catálogo Mayorista de Hielo Gourmet
         </h1>
 
-        {/* Componente de Filtro de Categorías */}
         <CategoryFilter
           categoriaSeleccionada={categoriaSeleccionada}
           alSeleccionarCategoria={setCategoriaSeleccionada}
@@ -60,12 +61,27 @@ function App() {
                 key={prod.id}
                 producto={prod}
                 agregarProducto={agregarProducto}
-                verDetalle={verDetalle}
+                verDetalle={(p) => setProductoSeleccionado(p)}
               />
             ))}
           </div>
         )}
       </main>
+
+      {/* 3. Modal Detalle */}
+      <ProductDetailModal
+        producto={productoSeleccionado}
+        alCerrar={() => setProductoSeleccionado(null)}
+        alAgregar={agregarProducto}
+      />
+
+      {/* 4. Carrito */}
+      <Cart
+        visible={mostrarCarrito}
+        alCerrar={() => setMostrarCarrito(false)}
+        carrito={carrito}
+        alVaciar={vaciarCarrito}
+      />
     </div>
   );
 }
