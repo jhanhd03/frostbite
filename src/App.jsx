@@ -21,27 +21,61 @@ function App() {
     });
   }, []);
 
+  // agregar al carrito agrupando por producto
   const agregarProducto = (producto) => {
-    setCarrito([...carrito, producto]);
+    const existe = carrito.find((item) => item.id === producto.id);
+    if (existe) {
+      setCarrito(
+        carrito.map((item) =>
+          item.id === producto.id ? { ...item, cantidad: item.cantidad + 1 } : item
+        )
+      );
+    } else {
+      setCarrito([...carrito, { ...producto, cantidad: 1 }]);
+    }
+  };
+
+  //quitar una unidad del producto y borrarlo si llega a 0
+  const eliminarUnaUnidad = (productoId) => {
+    const productoExistente = carrito.find((item) => item.id === productoId);
+    if (productoExistente.cantidad === 1) {
+      setCarrito(carrito.filter((item) => item.id !== productoId));
+    } else {
+      setCarrito(
+        carrito.map((item) =>
+          item.id === productoId ? { ...item, cantidad: item.cantidad - 1 } : item
+        )
+      );
+    }
   };
 
   const vaciarCarrito = () => {
     setCarrito([]);
   };
 
-  const productosFiltrados = categoriaSeleccionada === "Todos"
-    ? productos
-    : productos.filter((prod) => prod.categoria === categoriaSeleccionada);
+  const confirmarPedido = (total) => {
+    alert(`¡Pedido confirmado exitosamente por $${total}!\nNos contactaremos para programar el despacho.`);
+    setCarrito([]);
+    setMostrarCarrito(false);
+  };
+
+  // Cantidad total de bolsas en el pedido para el Navbar
+  const totalArticulos = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+
+  const productosFiltrados =
+    categoriaSeleccionada === "Todos"
+      ? productos
+      : productos.filter((prod) => prod.categoria === categoriaSeleccionada);
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* 1. Navbar */}
-      <Navbar 
-        cartCount={carrito.length} 
-        onOpenCart={() => setMostrarCarrito(true)} 
+      {/* 1. Navbar con contador total*/}
+      <Navbar
+        cartCount={totalArticulos}
+        onOpenCart={() => setMostrarCarrito(true)}
       />
 
-      {/* 2. Contenido Principal */}
+      {/* 2. Catálogo */}
       <main className="max-w-5xl mx-auto p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">
           Catálogo Mayorista de Hielo Gourmet
@@ -68,19 +102,21 @@ function App() {
         )}
       </main>
 
-      {/* 3. Modal Detalle */}
+      {/* 3. Detalle */}
       <ProductDetailModal
         producto={productoSeleccionado}
         alCerrar={() => setProductoSeleccionado(null)}
         alAgregar={agregarProducto}
       />
 
-      {/* 4. Carrito */}
+      {/* 4. Carrito con cantidades, total y confirmación */}
       <Cart
         visible={mostrarCarrito}
         alCerrar={() => setMostrarCarrito(false)}
         carrito={carrito}
+        alEliminarUno={eliminarUnaUnidad}
         alVaciar={vaciarCarrito}
+        alConfirmar={confirmarPedido}
       />
     </div>
   );
