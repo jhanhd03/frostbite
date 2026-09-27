@@ -5,6 +5,7 @@ import CategoryFilter from "./components/CategoryFilter";
 import ProductDetailModal from "./components/ProductDetailModal";
 import Cart from "./components/Cart";
 import { obtenerProductos } from "./data/productos";
+import Footer from "./components/Footer";
 
 function App() {
   const [productos, setProductos] = useState([]);
@@ -118,6 +119,9 @@ function App() {
         alVaciar={vaciarCarrito}
         alConfirmar={confirmarPedido}
       />
+
+      {/* 5. Pie de página institucional */}
+      <Footer />
     </div>
   );
 }
